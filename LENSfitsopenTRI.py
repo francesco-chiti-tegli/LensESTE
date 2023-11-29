@@ -532,7 +532,7 @@ Learning_scheduler = tf.keras.callbacks.LearningRateScheduler(LearningRate)
 
 #%%
 hist = model.fit(images_nor, labels_nor, epochs=40, validation_data=(images_val, labels_val), shuffle=True, callbacks=[Learning_scheduler])
-#%% (8b) We create the CNN model (LENSbuona)
+#%% (8b) We create the CNN model (LENSbuonaTRI)
 
 model = Sequential()
 model.add(Conv2D(16, (3,3), activation='relu', input_shape=(128,128,3), padding='SAME'))
@@ -599,7 +599,7 @@ plt.figure(3)
 plt.plot(hist.history['loss'], color='teal', label='loss')
 plt.plot(hist.history['val_loss'], color='orange', label='val_loss')
 plt.suptitle('Loss Function', fontsize=14)
-plt.legend(loc='upper left')
+plt.legend()
 plt.xlabel('Epochs')
 plt.show()
 
@@ -607,7 +607,7 @@ plt.figure(4)
 plt.plot(hist.history['accuracy'], color='teal', label='acc')
 plt.plot(hist.history['val_accuracy'], color='orange', label='val_acc')
 plt.suptitle('Accuracy', fontsize=14)
-plt.legend(loc='upper left')
+plt.legend()
 plt.xlabel('Epochs')
 plt.show()
 

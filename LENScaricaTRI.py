@@ -173,6 +173,11 @@ cutout_nor[..., 2] = np.reshape(cutout_r_nor, (cutout_r_nor.shape[0],128,128))
 
 ready_model = tf.keras.models.load_model('C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/LENSQUASfitsTRI1010')
 
+#%% Visualize the CNN model (PICTURE)
+from PIL import ImageFont
+import visualkeras
+font = ImageFont.truetype("C:/Users/fchit/Downloads/Hack/Hack-Regular.ttf",25, encoding="unic")
+visualkeras.layered_view(ready_model, spacing=5, font=font, legend=True)
 #%%
 
 ready_predict = np.ndarray.flatten(ready_model.predict(cutout_nor))
@@ -184,7 +189,7 @@ for i in np.arange(len(ready_predict)):
         ready_predict_bi[i]=1
 
 plt.figure(1)
-plt.suptitle('Raw Results TRI', fontsize=14)
+plt.suptitle('Results TRI', fontsize=14)
 plt.hist(ready_predict, 50)
 plt.show()
 
@@ -253,7 +258,8 @@ for i in np.arange(len(ready_predict)):
 print('---------------------------------------------------- good')
 perfect = 0
 perfect_array = []
-nn_array = []
+perfect_names = []
+almost_perfect_array = []
 
 for i in np.arange(len(good)):
     if (good_score[i] < 0.8):
@@ -263,11 +269,14 @@ for i in np.arange(len(good)):
     if (good_score[i] == 1.):
         perfect = perfect + 1
         perfect_array.append(good[i])
+        perfect_names.append(cutout_name_clean[i])
     if ((good_score[i] > 0.99) and (good_score[i] < 1.)):
-        nn_array.append(good[i])
+        almost_perfect_array.append(good[i])
         
 perfect_array = np.array(perfect_array)
-nn_array = np.array(nn_array)
+perfect_names = np.array(perfect_names)
+almost_perfect_array = np.array(almost_perfect_array)
+
 print('perfect = ' + str(perfect))
 print( )
 print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ bad')
@@ -307,7 +316,7 @@ for i in np.arange(len(june_predict_bi)):
         june_predict_bi[i]=1
 
 plt.figure(3)
-plt.suptitle('Raw Results JUNE', fontsize=14)
+plt.suptitle('Results JUNE', fontsize=14)
 plt.hist(june_predict, 50)
 plt.show()
 
@@ -335,7 +344,7 @@ for i in np.arange(len(boost_predict_bi)):
         boost_predict_bi[i]=1
 
 plt.figure(3)
-plt.suptitle('Raw Results BOOST', fontsize=14)
+plt.suptitle('Results BOOST', fontsize=14)
 plt.hist(boost_predict, 50)
 plt.show()
 
@@ -348,13 +357,15 @@ for i in np.arange(boost_predict_bi.shape[0]):
         else:
             differences_binary_good = differences_binary_good + 1
 print()
-print('model SEPTEMBER differences with TRI1010')
+print('model TRI1010 differences with TRI1010 boost')
 print('bad for TRI1010: ' + str(differences_binary_bad) + ', good for TRI1010: ' + str(differences_binary_good))
 print()
 
 bad_boost = []
 good_boost = []
 perfect_boost = []
+perfect_boost_name = []
+
 for i in np.arange(len(boost_predict_bi)):
     if (boost_predict_bi[i] == 0):
         bad_boost.append(cutout_nor[i])
@@ -362,22 +373,32 @@ for i in np.arange(len(boost_predict_bi)):
         good_boost.append(cutout_nor[i])
     if (boost_predict[i] == 1.):
         perfect_boost.append(cutout_nor[i])
+        perfect_boost_name.append(cutout_name_clean[i])
 bad_boost = np.array(bad_boost)
 good_boost = np.array(good_boost)
 perfect_boost = np.array(perfect_boost)
+perfect_boost_name = np.array(perfect_boost_name)
 
 differences_binary_good = 0
 differences_binary_bad = 0
 for i in np.arange(boost_predict_bi.shape[0]):
     if (boost_predict_bi[i] != june_predict_bi[i]):
-        if (ready_predict_bi[i] < 0.5):
+        if (boost_predict_bi[i] < 0.5):
             differences_binary_bad = differences_binary_bad + 1
         else:
             differences_binary_good = differences_binary_good + 1
 print()
-print('model SEPTEMBER differences with TRI1010')
-print('bad for TRI1010: ' + str(differences_binary_bad) + ', good for TRI1010: ' + str(differences_binary_good))
+print('model JUNE differences with TRI1010 boost')
+print('bad for TRI1010 boost: ' + str(differences_binary_bad) + ', good for TRI1010 boost: ' + str(differences_binary_good))
 print()
+
+#%% Write a list of PERFECT boosted candidates
+
+with open ("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/boost_perfect_canidates.txt", 'w') as fo:
+   for d in perfect_boost_name:
+     fo.write(str(d) + ',')
+     
+#You will have to manually delete the last comma (',') in the text file
 
 #%% I confront the different datasets composed by Francesco Guarneri
 
@@ -412,13 +433,20 @@ def confrontoTESTsets(path1, path2, form1, form2):
     return existent, nonexistent
 
 existent, nonexistent = confrontoTESTsets( path1='C:/Users/fchit/Downloads/candidates/candidates/i', path2='C:/Users/fchit/Downloads/cutoutActualCandPS', form1='.fits', form2='.jpg' )
-print('Confronto fra i due test set, di giugno e settembre:')
+print('Confronto fra i due candidate set, di giugno e settembre:')
 print('esistenti in entrambi i set: ' + str(len(existent)))
 
 existent, nonexistent = confrontoTESTsets( path1='C:/Users/fchit/Downloads/candidates/candidates/i', path2='C:/Users/fchit/Downloads/candidates/i', form1='.fits', form2='.fits' )
 print('Confronto fra il train set ed il candidates set (sept) in banda i:')
 print('esistenti in entrambi i set: ' + str(len(existent)))
 
+plt.figure(3)
+plt.suptitle('Results', fontsize=14)
+plt.hist(ready_predict, 50, alpha = 0.5, label='TRI1010')
+plt.hist(june_predict, 50, alpha = 0.5, label='june')
+plt.hist(boost_predict, 50, alpha = 0.5, label='TRIboost')
+plt.legend()
+plt.show()
 
 
 
