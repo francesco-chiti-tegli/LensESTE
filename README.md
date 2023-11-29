@@ -1,4 +1,7 @@
 # LensESTE
 Repository for codes I used in the Trieste LENS.
-The "TRI" codes are for three-channels image with y,i,r bands, while normal ones are for one-y-channel pictures.
-The "open" codes are for the training of the CNN, while "carica" are for the testing with candidates cutouts.
+The "TRI" codes are for three-channels image with y,i,r bands.
+The "open" code is for the training of the CNN, while "carica" is for the testing with candidates cutouts.
+
+boost.txt is the boosting list for the second train.
+boost_perfect_candidates.txt is the list of 670 perfect cutouts with the boosted CNN.
