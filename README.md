@@ -1,5 +1,5 @@
 # LensESTE
-Repository for codes I used in the Trieste LENS.
+Repository for codes I used for the INAF Trieste LENS project.
 The "TRI" codes are for three-channels image with y,i,r bands.
 The "open" code is for the training of the CNN, while "carica" is for the testing with candidates cutouts.
 
