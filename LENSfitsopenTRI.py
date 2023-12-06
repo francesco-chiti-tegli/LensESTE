@@ -493,37 +493,46 @@ tf.keras.backend.clear_session()
 
 
 def LearningRate(epoch):
-    if (epoch < 10):
+    if (epoch < 5):
         return 0.001
-    if ((epoch >= 10) and (epoch < 20)):
-        return 0.00050
+    if ((epoch >= 5) and (epoch < 10)):
+        return 0.0002
+    if (epoch >= 10) and (epoch < 15):
+        return 0.00004
+    if (epoch >= 15) and (epoch < 20):
+        return 0.000004
     if (epoch >= 20) and (epoch < 30):
-        return 0.00005
+        return 0.0000004
     if (epoch >= 30):
-        return 0.00001
+        return 0.00000004
     
 model = Sequential()
 model.add(Conv2D(16, (3,3), activation='relu', input_shape=(128,128,3), padding='SAME'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 tf.keras.layers.BatchNormalization()
-model.add(Dropout(0.4))
+model.add(Dropout(0.2))
 model.add(Conv2D(32, (3,3), activation='relu', padding='SAME'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 tf.keras.layers.BatchNormalization()
-model.add(Dropout(0.4))
+model.add(Dropout(0.2))
 model.add(Conv2D(64, (3,3), activation='relu', padding='SAME'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 tf.keras.layers.BatchNormalization()
-model.add(Dropout(0.4))
+model.add(Dropout(0.2))
+model.add(Conv2D(128, (3,3), activation='relu', padding='SAME'))
+model.add(MaxPooling2D(pool_size=(2,2)))
+tf.keras.layers.BatchNormalization()
+model.add(Dropout(0.2))
 
 model.add(Flatten())
 
-model.add(Dense(16, activation='relu'))
+model.add(Dense(8, activation='relu'))
 tf.keras.layers.BatchNormalization()
-model.add(Dropout(0.4))
-model.add(Dense(4, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(8, activation='relu'))
 tf.keras.layers.BatchNormalization()
 model.add(Dense(1, activation='sigmoid'))
+tf.keras.layers.BatchNormalization()
 
 model.compile(optimizer=Adam(), loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
 model.summary()
@@ -531,7 +540,7 @@ model.summary()
 Learning_scheduler = tf.keras.callbacks.LearningRateScheduler(LearningRate)
 
 #%%
-hist = model.fit(images_nor, labels_nor, epochs=40, validation_data=(images_val, labels_val), shuffle=True, callbacks=[Learning_scheduler])
+hist = model.fit(images_nor, labels_nor, epochs=160, validation_data=(images_val, labels_val), shuffle=True, callbacks=[Learning_scheduler])
 #%% (8b) We create the CNN model (LENSbuonaTRI)
 
 model = Sequential()

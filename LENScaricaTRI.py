@@ -17,6 +17,8 @@ from random import shuffle
 from random import choice
 import cv2
 
+plt.rcParams['figure.dpi'] = 1000
+
 NOfits = ['2319488154672985088.fits',
  '3472945331896957696.fits',
  '4872570853202075008.fits',
@@ -335,7 +337,7 @@ print()
 #%% And with the model TRI1010 boosted
 
 model_boost = tf.keras.models.load_model('C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/LENSQUASfitsTRI1010boost')
-boost_predict = np.ndarray.flatten(model_boost.predict(cutout_nor))
+boost_predict = np.ndarray.flatten(model_boost.predict(cutout_nor).astype('float64'))
 boost_predict_bi = np.zeros(len(boost_predict))
 for i in np.arange(len(boost_predict_bi)):
     if boost_predict[i]<0.5:
@@ -343,7 +345,7 @@ for i in np.arange(len(boost_predict_bi)):
     else:
         boost_predict_bi[i]=1
 
-plt.figure(3)
+plt.figure(4)
 plt.suptitle('Results BOOST', fontsize=14)
 plt.hist(boost_predict, 50)
 plt.show()
@@ -392,13 +394,58 @@ print('model JUNE differences with TRI1010 boost')
 print('bad for TRI1010 boost: ' + str(differences_binary_bad) + ', good for TRI1010 boost: ' + str(differences_binary_good))
 print()
 
-#%% Write a list of PERFECT boosted candidates
+deg_array = []
+deg_ignore = []
 
-with open ("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/boost_perfect_canidates.txt", 'w') as fo:
+for i in np.arange(boost_predict.shape[0]):
+    if ((boost_predict[i] in deg_ignore) == False):
+        temp = []
+        temp.append(boost_predict[i])
+        deg_ignore.append(boost_predict[i])
+        
+        deg_score = 0
+        for j in np.arange(boost_predict.shape[0]):
+            if (boost_predict[j] == boost_predict[i]):
+                deg_score = deg_score + 1
+                
+        temp.append(deg_score)
+        deg_array.append(temp)
+        del temp
+
+deg_array = np.array(deg_array).astype('float64')
+deg_array = deg_array[deg_array[:, 1].argsort()]
+       
+#%% Write a list of PERFECT boosted candidates
+'''
+with open ("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/boost_perfect_candidates.txt", 'w') as fo:
    for d in perfect_boost_name:
      fo.write(str(d) + ',')
-     
+'''
+
 #You will have to manually delete the last comma (',') in the text file
+
+#%% Write a complete list of results of the boosted CNN
+
+final_boost = []
+
+for i in np.arange(boost_predict.shape[0]):
+    temp_boost = []
+    temp_boost.append(cutout_name_clean[i])
+    temp_boost.append(boost_predict[i].astype('float64'))
+    
+    final_boost.append(temp_boost)
+    
+    del temp_boost
+
+final_boost = np.array(final_boost)
+
+#%%
+
+import csv
+with open("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/boost_ALL_candidates.txt", mode='w') as employee_file:
+    employee_writer = csv.writer(employee_file, delimiter=',',  quotechar='"',
+                                 quoting=csv.QUOTE_MINIMAL)
+    employee_writer.writerows(final_boost)
 
 #%% I confront the different datasets composed by Francesco Guarneri
 
@@ -440,7 +487,7 @@ existent, nonexistent = confrontoTESTsets( path1='C:/Users/fchit/Downloads/candi
 print('Confronto fra il train set ed il candidates set (sept) in banda i:')
 print('esistenti in entrambi i set: ' + str(len(existent)))
 
-plt.figure(3)
+plt.figure(5)
 plt.suptitle('Results', fontsize=14)
 plt.hist(ready_predict, 50, alpha = 0.5, label='TRI1010')
 plt.hist(june_predict, 50, alpha = 0.5, label='june')
@@ -448,15 +495,47 @@ plt.hist(boost_predict, 50, alpha = 0.5, label='TRIboost')
 plt.legend()
 plt.show()
 
+#%% Generate attention maps
 
+w = randrange(cutout_nor.shape[0])
+img_prova = cutout_nor[w]
 
+from tf_keras_vis.saliency import Saliency
+from tf_keras_vis.utils.model_modifiers import ReplaceToLinear
+from tf_keras_vis.gradcam import Gradcam
+from matplotlib import cm
 
+replace2linear = ReplaceToLinear()
 
+saliency = Saliency(model_boost, model_modifier=replace2linear, clone=True)
 
+def score_function(output):
+    return (output[0][0])
 
+saliency_map = saliency(score_function, img_prova, smooth_samples=20, smooth_noise=0.20)
+saliency_map = np.squeeze(saliency_map, axis=0)
 
+gradcam = Gradcam(model_boost, model_modifier=replace2linear, clone=True)
+cam = gradcam(score_function, img_prova,  penultimate_layer=-1)
+cam = np.squeeze(cam, axis=0)
 
+heatmap = np.uint8(cm.jet(cam)[..., :3] * 255)
 
+f, ax = plt.subplots(nrows=1, ncols=3)
+ax[0].set_title('Cutout' + ' ' + str(w))
+ax[0].axis('off')
+ax[0].imshow(img_prova)
+ax[1].set_title('Saliency')
+ax[1].axis('off')
+ax[1].imshow(saliency_map)
+ax[2].set_title('Attention Map')
+ax[2].axis('off')
+ax[2].imshow(img_prova)
+ax[2].imshow(heatmap, cmap='jet', alpha=0.5)
+plt.tight_layout()
+plt.show()
+
+print(boost_predict[w])
 
 
 
