@@ -678,4 +678,4 @@ plt.show()
 
 #%% (13) Let's save the model!
 
-model.save("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/LENSQUASfitsTRI1010boost")
+#model.save("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/LENSQUASfitsTRI1010boost")

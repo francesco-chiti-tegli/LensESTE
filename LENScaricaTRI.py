@@ -438,15 +438,13 @@ for i in np.arange(boost_predict.shape[0]):
     del temp_boost
 
 final_boost = np.array(final_boost)
-
-#%%
-
+'''
 import csv
 with open("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/boost_ALL_candidates.txt", mode='w') as employee_file:
     employee_writer = csv.writer(employee_file, delimiter=',',  quotechar='"',
                                  quoting=csv.QUOTE_MINIMAL)
     employee_writer.writerows(final_boost)
-
+'''
 #%% I confront the different datasets composed by Francesco Guarneri
 
 def confrontoTESTsets(path1, path2, form1, form2):
@@ -522,20 +520,19 @@ cam = np.squeeze(cam, axis=0)
 heatmap = np.uint8(cm.jet(cam)[..., :3] * 255)
 
 f, ax = plt.subplots(nrows=1, ncols=3)
-ax[0].set_title('Cutout' + ' ' + str(w))
+#ax[0].set_title('Cutout')
 ax[0].axis('off')
 ax[0].imshow(img_prova)
-ax[1].set_title('Saliency')
+#ax[1].set_title('Saliency')
 ax[1].axis('off')
 ax[1].imshow(saliency_map)
-ax[2].set_title('Attention Map')
+#ax[2].set_title('Attention Map')
 ax[2].axis('off')
 ax[2].imshow(img_prova)
 ax[2].imshow(heatmap, cmap='jet', alpha=0.5)
 plt.tight_layout()
+#f.text(0.5, 1., 'score: ' + str(boost_predict[w]), horizontalalignment="center")
 plt.show()
 
+print(w)
 print(boost_predict[w])
-
-
-
