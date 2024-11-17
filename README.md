@@ -1,5 +1,8 @@
 # LensESTE
 Repository for codes I used for the INAF Trieste LENS project.
+The most recent codes (November 2024) are displayed with "september" or "settembre" in their name.
+
+
 The "TRI" codes are for three-channels image with y,i,r bands.
 The "open" code is for the training of the model, while "carica" is for the testing with candidates cutouts.
 
