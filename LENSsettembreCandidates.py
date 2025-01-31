@@ -238,7 +238,54 @@ print('perfect for september120 but not for TRI1010boost: ' + str(perfect_differ
 print()
 del perfect_differences
 
-#%% (5) Wrtiting a list of perfect candidates and a list of all candidates with their scores
+#%% (5) Measuring the separation
+
+from scipy.ndimage import gaussian_filter
+from scipy.signal import find_peaks
+from skimage.transform import resize
+
+def find_peak_separation(cutout_nor_one, sept_predict_bi_one):
+    pixel_scale = 30. / 120.
+    cutout_resized_one = resize(cutout_nor_one, (cutout_nor_one.shape[0], 120, 120, cutout_nor_one.shape[3]), anti_aliasing=True)
+    
+    selected_images = cutout_resized_one[sept_predict_bi_one == 1]
+    
+    separations = []
+    
+    for img in selected_images:
+        grayscale = np.mean(img, axis=-1)
+        
+        smoothed = gaussian_filter(grayscale, sigma=1)
+        
+        central_region = smoothed[50:70, 50:70]
+        row_sum = np.mean(central_region, axis=0)
+        col_sum = np.mean(central_region, axis=1)
+        
+        row_peaks, _ = find_peaks(row_sum, height=np.max(row_sum) * 0.5, distance=1)
+        col_peaks, _ = find_peaks(col_sum, height=np.max(col_sum) * 0.5, distance=1)
+        
+        if len(row_peaks) >= 2 and len(col_peaks) >= 2:
+            row_intensities = [(p, row_sum[p]) for p in row_peaks]
+            col_intensities = [(p, col_sum[p]) for p in col_peaks]
+            row_intensities.sort(key=lambda x: x[1], reverse=True)
+            col_intensities.sort(key=lambda x: x[1], reverse=True)
+            
+            peak1 = (col_intensities[0][0] + 40, row_intensities[0][0] + 40)
+            peak2 = (col_intensities[1][0] + 40, row_intensities[1][0] + 40)
+            
+            separation_pixels = np.sqrt((peak2[0] - peak1[0])**2 + (peak2[1] - peak1[1])**2)
+            
+            separation_arcsec = separation_pixels * pixel_scale
+            separations.append(separation_arcsec)
+        
+    return selected_images, np.array(separations)
+
+print(np.argmin(find_peak_separation(cutout_nor, sept_predict_bi)[1]))
+
+plt.imshow(find_peak_separation(cutout_nor, sept_predict_bi)[0][20])
+print(find_peak_separation(cutout_nor, sept_predict_bi)[1][20])
+
+#%% (6) Wrtiting a list of perfect candidates and a list of all candidates with their scores
 
 '''
 with open ("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/september_perfect_candidates.txt", 'w') as fo:
@@ -256,7 +303,7 @@ with open ("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/september_
 
 #Last comma (',') in the text files needs to be manually deleted after writing
 
-#%% (6) Let us investigate further with the known lenses
+#%% (7) Let us investigate further with the known lenses
 # To verify:
 #3586098513053631232.fits
 
@@ -291,7 +338,7 @@ plt.suptitle('Matched elements in Known and in Candidates', fontsize=14)
 plt.hist(matching_scores, 50)
 plt.show()
 
-#%% (7) Let us write a list of the scores of the known lenses' score
+#%% (8) Let us write a list of the scores of the known lenses' score
 '''
 with open ("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/CNN/september_known_score.txt", 'w') as fo:
    for i in np.arange(len(matching)):
