@@ -1,8 +1,9 @@
 # LensESTE
 INAF Trieste QUBRICS Lens project.
 
-The most recent update pre-resumbission is in the folder GuarneriResume, and contains the catalogues, the codes for the catalogue query pre-CNN (Confronto_SIMBAD_Catalogue.py) and the post-CNN classification (CNNParteII.py).
+The most recent update pre-resumbission is in the folder LensESTE-NEW, and contains the catalogues, the codes for the catalogue query pre-CNN (Confronto_SIMBAD_Catalogue.py) and the post-CNN classification (CNNParteII.py).
 
+The codes for the old version are in LensESTE-OLD.
 
 The CNN codes (November 2024) are displayed with "september" or "settembre" in their name.
 
