@@ -4,7 +4,7 @@ INAF Trieste QUBRICS Lens project.
 ## LensESTE-NEW
 The most recent update pre-resumbission is in the folder LensESTE-NEW, and contains the catalogues, the codes for the catalogue query pre-CNN (Confronto_SIMBAD_Catalogue.py) and the post-CNN classification (CNNParteII.py).
 The final post-CNN catalogue of 903 candidate lenses is in Catalogue_post_CNN.csv
-The original catalogue by Francesco Guarneri is in Catalogue.csv
+\The original catalogue by Francesco Guarneri is in Catalogue.csv
 
 ## LensESTE-OLD
 The codes for the old version are in LensESTE-OLD.
