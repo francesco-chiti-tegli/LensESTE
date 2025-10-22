@@ -1,6 +1,10 @@
 # LensESTE
-Repository for codes I used for the INAF Trieste LENS project.
-The most recent codes (November 2024) are displayed with "september" or "settembre" in their name.
+INAF Trieste QUBRICS Lens project.
+
+The most recent update pre-resumbission is in the folder GuarneriResume, and contains the catalogues, the codes for the catalogue query pre-CNN (Confronto_SIMBAD_Catalogue.py) and the post-CNN classification (CNNParteII.py).
+
+
+The CNN codes (November 2024) are displayed with "september" or "settembre" in their name.
 
 
 The "TRI" codes are for three-channels image with y,i,r bands.
