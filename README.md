@@ -1,5 +1,5 @@
 # LensESTE
-INAF Trieste QUBRICS Lens project.
+INAF Trieste QUBRICS Lenses project.
 
 ## LensESTE-NEW
 The most recent update pre-resumbission is in the folder LensESTE-NEW, and contains the catalogues, the codes for the catalogue query pre-CNN (Confronto_SIMBAD_Catalogue.py) and the post-CNN classification (CNNParteII.py).
