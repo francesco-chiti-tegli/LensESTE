@@ -2,7 +2,7 @@
 INAF Trieste QUBRICS Lenses project.
 
 ## Final Products
-The final catalogues of the QUBRICS multiplets project.
+The final catalogues of the QUBRICS multiplets project, with both the full catalogue and the CNN-positively-flagged one.
 
 ## LensESTE-NEW
 The most recent update pre-resumbission is in the folder LensESTE-NEW, and contains the intermediate catalogues, the codes for the catalogue query pre-CNN (Confronto_SIMBAD_Catalogue.py) and the post-CNN classification (CNNParteII.py).
