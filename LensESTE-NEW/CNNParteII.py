@@ -6,6 +6,7 @@ Created on Wed Oct 15 12:59:55 2025
 """
 
 import tensorflow as tf
+import json
 from scipy.spatial import cKDTree
 from astropy.coordinates import SkyCoord
 import numpy as np
@@ -556,16 +557,20 @@ while i < len(pairs) - 1:
         i += 2
     else: i += 1
 
+ftsz = 14
 fig, axes = plt.subplots(2, 1, figsize=(7, 8), sharex=True)
 axes[0].hist(pairs["phot_g_mean_mag"], bins=100, edgecolor='black', alpha=0.7)
-axes[0].set_ylabel("Counts"); axes[0].set_xlim(13.75, 22.5)
-axes[0].set_title("Gaia G magnitude distribution")
+axes[0].set_ylabel("Counts", fontsize=ftsz)
+axes[0].set_xlim(13.75, 22.5)
 axes[1].hist(brightest_mags, bins=100, alpha=0.6, label="Bright", edgecolor='black')
 axes[1].hist(faintest_mags, bins=100, alpha=0.6, label="Faint", edgecolor='black')
-axes[1].set_xlabel("Gaia G magnitude")
-axes[1].set_ylabel("Counts")
+axes[1].set_xlabel("Gaia G magnitude", fontsize=ftsz)
+axes[1].set_ylabel("Counts", fontsize=ftsz)
 axes[1].set_xlim(13.75, 22.5); axes[1].legend(loc='lower left')
-xticks = np.arange(14, 23, 2); axes[0].set_xticks(xticks); axes[1].set_xticks(xticks)
+xticks = np.arange(14, 23, 1); axes[0].set_xticks(xticks); axes[1].set_xticks(xticks)
+
+axes[0].tick_params(axis='both', labelsize=12)
+axes[1].tick_params(axis='both', labelsize=12)
 
 for ax in axes:
     inset = inset_axes(ax, width="40%", height="35%", bbox_to_anchor=(0.05, 0.05, 0.9, 0.9),
@@ -602,20 +607,23 @@ x = cnn_objects['parallax_over_error'].values
 y = cnn_objects['pm_over_error'].values
 gmag = cnn_objects['phot_g_mean_mag'].values
 
-fig, ax = plt.subplots(figsize=(7,6))
+ftsz = 15
+fig, ax = plt.subplots(figsize=(8,6))
 sc = ax.scatter(x[unknown_mask], y[unknown_mask], c=gmag[unknown_mask], cmap='viridis', s=10, alpha=0.8)
 ax.scatter(x[known_mask], y[known_mask], color='black', s=10, alpha=0.8)
 ax.set_xlim(-10,125)
 ax.set_ylim(-5,85)
-ax.set_xlabel('Parallax over error')
-ax.set_ylabel('Proper motion over error')
-ax.set_title('Parallax vs Proper Motion')
+ax.set_xlabel('Parallax over error', fontsize=ftsz)
+ax.set_ylabel('Proper motion over error', fontsize=ftsz)
+ax.tick_params(axis='both', labelsize=12)
+ax.tick_params(axis='both', labelsize=12)
 
 ax.legend(handles=[plt.Line2D([], [], marker='o', color='w', markerfacecolor='black', markersize=8, label='Known'),
-                   plt.Line2D([], [], marker='o', color='w', markerfacecolor='lightgreen', markersize=8, label='Candidates')], loc='lower right')
+                   plt.Line2D([], [], marker='o', color='w', markerfacecolor='lightgreen', markersize=8, label='Candidates')], loc='lower right', fontsize=ftsz)
 
 cbar = plt.colorbar(sc, ax=ax)
-cbar.set_label('Gaia G magnitude')
+cbar.set_label('Gaia G magnitude', fontsize=ftsz)
+cbar.ax.tick_params(labelsize=12)
 inset = inset_axes(ax, width="40%", height="40%", loc='upper right')
 inset.scatter(x[unknown_mask], y[unknown_mask], c=gmag[unknown_mask], cmap='viridis', s=10, alpha=0.8)
 inset.scatter(x[known_mask], y[known_mask], color='black', s=10, alpha=0.8)
@@ -788,7 +796,7 @@ ax_sc1 = fig.add_subplot(gs[1,0])
 ax_hy1 = fig.add_subplot(gs[1,1], sharey=ax_sc1)
 ax_sc2 = fig.add_subplot(gs[3,0], sharex=ax_sc1)
 ax_hy2 = fig.add_subplot(gs[3,1], sharey=ax_sc2)
-ax_sc1.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+ax_sc1.tick_params(axis='x', which='both', bottom=True, top=False, labelbottom=False)
 
 x_miss = to1d(brightest_mags_miss)
 x_rec  = to1d(brightest_mags_rec)
@@ -832,9 +840,10 @@ for x, y, c in zip(others_x, others_y2, others_c):
 
 ax_sc2.scatter(x_miss, y2_miss, s=30, alpha=0.9, facecolors='none', edgecolors='red', zorder=zmap['red'])
 ax_hy2.hist(y2_miss, bins=bins_y2, facecolor='red', edgecolor='k', alpha=0.6, orientation='horizontal', zorder=zmap['red'])
-ax_sc1.set_ylabel("Gaia G magnitude (faint)")
-ax_sc2.set_ylabel("Separation [arcsec]")
-ax_sc2.set_xlabel("Gaia G magnitude (bright)")
+ftsz = 14
+ax_sc1.set_ylabel("Gaia G magnitude (faint)", fontsize=ftsz)
+ax_sc2.set_ylabel("Separation [arcsec]", fontsize=ftsz)
+ax_sc2.set_xlabel("Gaia G magnitude (bright)", fontsize=ftsz)
 ax_sc1.set_xlim(15.5, 21.25)
 
 ax_hx1.tick_params(axis='x', labelbottom=False)
@@ -844,10 +853,185 @@ ax_hy1.tick_params(axis='y', labelleft=False)
 ax_hy2.tick_params(axis='x', labelbottom=False)
 ax_hy2.tick_params(axis='y', labelleft=False)
 
+ax_sc1.tick_params(axis='y', labelsize=ftsz)
+ax_sc2.tick_params(axis='both', labelsize=ftsz)
+
 ax_sc2.legend(["Recovered known lenses", "Missed - No candidate", "Missed - Single match", "Outside PS footprint"])
-plt.savefig("C:/Users/fchit/Downloads/CompareKnown_new.pdf", format="pdf", bbox_inches="tight")
+plt.savefig("C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/GuaneriResume/Immagini_Nuove_Guarneri/CompareKnown_new.pdf", format="pdf", bbox_inches="tight")
 plt.show()
 
+#%% (13a) Final QUBRICS multiplets catalogue
+
+
+SYSTEM_COLS = [
+    "source_id", "ra", "dec", "parallax_over_error", "pm_over_error",
+    "phot_g_mean_mag", "phot_bp_mean_mag", "phot_rp_mean_mag",
+    "redshift_qsoc", "zscore_qsoc", "flags_qsoc",
+    "classlabel_dsc", "classlabel_dsc_joint", "has_xp_continuous"]
+
+def build_group_level_catalog(df_objects: pd.DataFrame,
+                              mag_col: str = "phot_g_mean_mag",
+                              group_col: str = "group_id",
+                              has_cutout_col: str = "has_cutout",
+                              cnn_flag_col: str = "cnn_flag",
+                              system_cols: list[str] = SYSTEM_COLS) -> pd.DataFrame:
+
+    required = {group_col, "source_id", mag_col, has_cutout_col, cnn_flag_col}
+    missing = sorted(required - set(df_objects.columns))
+    if missing:
+        raise KeyError(f"Missing required columns in df_objects: {missing}")
+
+    system_cols_existing = [c for c in system_cols if c in df_objects.columns]
+
+    rows = []
+    for gid, g in df_objects.groupby(group_col, sort=True):
+        g = g.copy()
+
+        g_mag = g[[mag_col]].copy()
+        if np.isfinite(g_mag[mag_col]).any():
+            idx_bright = g[mag_col].astype(float).idxmin(skipna=True)
+        else:
+            idx_bright = g.index[0]
+
+        source_id_brightest = int(g.loc[idx_bright, "source_id"])
+        n_obj = int(len(g))
+
+        has_vals = g[has_cutout_col].astype(int).values
+        if np.any(has_vals == 1):
+            has_cutout = 1
+        elif np.any(has_vals == 0):
+            has_cutout = 0
+        else:
+            has_cutout = -1
+
+        cnn_vals = g[cnn_flag_col].astype(int).values
+        if np.any(cnn_vals == 1):
+            cnn_flag = 1
+        elif np.any(cnn_vals == 0):
+            cnn_flag = 0
+        else:
+            cnn_flag = -1
+
+        system = (g[system_cols_existing].sort_values(by=["source_id"]).to_dict(orient="records"))
+
+        rows.append({"group_id": int(gid), "source_id_brightest": source_id_brightest, "n_objects_in_group": n_obj, "has_cutout": int(has_cutout), "cnn_flag": int(cnn_flag), "system": system})
+
+    df_groups = pd.DataFrame(rows)
+    return df_groups
+
+final_dir = "C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/GuaneriResume/Final_Products"
+
+df_groups = build_group_level_catalog(df_objects)
+
+df_groups.to_json(os.path.join(final_dir, "QUBRICS_multiples_final.json"),
+                  orient="records", lines=True)
+
+df_groups_csv = df_groups.copy()
+df_groups_csv["system"] = df_groups_csv["system"].apply(lambda x: json.dumps(x, ensure_ascii=False))
+df_groups_csv.to_csv(os.path.join(final_dir, "QUBRICS_multiples_final.csv"), index=False)
+
+df_groups_pos = df_groups[df_groups["cnn_flag"] == 1].copy()
+df_groups_pos.to_json(os.path.join(final_dir, "QUBRICS_multiples_final_CNNpos.json"),
+                      orient="records", lines=True)
+
+df_groups_pos_csv = df_groups_pos.copy()
+df_groups_pos_csv["system"] = df_groups_pos_csv["system"].apply(lambda x: json.dumps(x, ensure_ascii=False))
+df_groups_pos_csv.to_csv(os.path.join(final_dir, "QUBRICS_multiples_final_CNNpos.csv"), index=False)
+
+################################################################################################################
+################################################################################################################
+################################################################################################################
+################################################################################################################
+
+
+def load_group_catalog(base_path_no_ext: str):
+    json_path = base_path_no_ext + ".json"
+    csv_path  = base_path_no_ext + ".csv"
+
+    df_json = pd.read_json(json_path, lines=True)
+
+    df_csv = pd.read_csv(csv_path)
+    if "system" in df_csv.columns:
+        df_csv["system"] = df_csv["system"].apply(lambda s: json.loads(s) if isinstance(s, str) else s)
+
+    return df_json, df_csv
+
+
+def quick_check(df: pd.DataFrame, name: str = "catalog", n_show: int = 5):
+    print(f"\n=== {name} ===")
+    print("Shape:", df.shape)
+    print("Columns:", list(df.columns))
+
+    if "group_id" in df.columns:
+        print("Unique groups:", df["group_id"].nunique())
+
+    if "cnn_flag" in df.columns:
+        print("cnn_flag counts:")
+        print(df["cnn_flag"].value_counts(dropna=False).sort_index())
+
+    if "has_cutout" in df.columns:
+        print("has_cutout counts:")
+        print(df["has_cutout"].value_counts(dropna=False).sort_index())
+
+    if "system" in df.columns:
+        sys_len = df["system"].apply(lambda x: len(x) if isinstance(x, (list, tuple)) else np.nan)
+        print("system length (min/median/max):",
+              int(np.nanmin(sys_len)), int(np.nanmedian(sys_len)), int(np.nanmax(sys_len)))
+
+    show_cols = [c for c in ["group_id", "source_id_brightest", "n_objects_in_group", "has_cutout", "cnn_flag"] if c in df.columns]
+    if show_cols:
+        print(f"\nHead ({n_show}) [{', '.join(show_cols)}]:")
+        print(df[show_cols].head(n_show).to_string(index=False))
+
+    if "system" in df.columns:
+        idx0 = df.index[0]
+        print("\nExample system row (first group, first 2 objects):")
+        sys0 = df.loc[idx0, "system"]
+        if isinstance(sys0, list):
+            print(json.dumps(sys0[:2], indent=2, ensure_ascii=False))
+        else:
+            print(sys0)
+
+
+def compare_json_csv(df_json: pd.DataFrame, df_csv: pd.DataFrame):
+    keys = ["group_id", "source_id_brightest", "n_objects_in_group", "has_cutout", "cnn_flag"]
+    keys = [k for k in keys if (k in df_json.columns and k in df_csv.columns)]
+
+    a = df_json[keys].sort_values("group_id").reset_index(drop=True)
+    b = df_csv[keys].sort_values("group_id").reset_index(drop=True)
+
+    equal = a.equals(b)
+    print("\n=== JSON vs CSV check (top-level columns) ===")
+    print("Compared keys:", keys)
+    print("Exact match:", equal)
+
+    if not equal:
+        diff = (a != b) & ~(a.isna() & b.isna())
+        bad_rows = np.where(diff.any(axis=1))[0][:10]
+        print("First differing rows (up to 10):", bad_rows.tolist())
+        for r in bad_rows:
+            print("\nRow", r)
+            print("JSON:", a.loc[r].to_dict())
+            print("CSV :", b.loc[r].to_dict())
+
+
+final_dir = "C:/Users/fchit/OneDrive/Desktop/ComplementiAstronomia/GuaneriResume/Final_Products"
+
+base_all = os.path.join(final_dir, "QUBRICS_multiples_final")
+base_pos = os.path.join(final_dir, "QUBRICS_multiples_final_CNNpos")
+
+df_all_json, df_all_csv = load_group_catalog(base_all)
+df_pos_json, df_pos_csv = load_group_catalog(base_pos)
+
+quick_check(df_all_json, "ALL (JSON)")
+quick_check(df_all_csv,  "ALL (CSV)")
+
+compare_json_csv(df_all_json, df_all_csv)
+
+quick_check(df_pos_json, "CNNpos (JSON)")
+quick_check(df_pos_csv,  "CNNpos (CSV)")
+
+compare_json_csv(df_pos_json, df_pos_csv)
 
 
 #%% (12) Matching with the GAIA Focused Product (Gaia, Krone-Martins - 2023)
@@ -1348,21 +1532,6 @@ print('Total: ' + str(tab["LENS"].astype('int').sum()))
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #%%
 
 hdul = fits.open("C:/Users/fchit/Downloads/ListUniqueLenses.fits")
@@ -1412,15 +1581,112 @@ hdul.close()
 
 
 
+#%% (???) QUBRICS LENSES golden sample
+
+SYSTEM_COLS = ["source_id","ra","dec","parallax_over_error","pm_over_error","phot_g_mean_mag","phot_bp_mean_mag","phot_rp_mean_mag","redshift_qsoc","zscore_qsoc","flags_qsoc","classlabel_dsc","classlabel_dsc_joint","has_xp_continuous","class_lens"]
+
+def build_group_level_catalog(df, mag_col="phot_g_mean_mag", group_col="group_id", has_cutout_col="has_cutout", cnn_flag_col="cnn_flag", system_cols=SYSTEM_COLS):
+    req = {group_col,"source_id",mag_col,has_cutout_col,cnn_flag_col}
+    miss = sorted(req - set(df.columns))
+    if miss: raise KeyError(f"Missing required columns in df_objects: {miss}")
+    sys_cols = [c for c in system_cols if c in df.columns]
+    rows = []
+    for gid, g in df.groupby(group_col, sort=True):
+        g = g.copy()
+        idx_b = g[mag_col].astype(float).idxmin(skipna=True) if np.isfinite(pd.to_numeric(g[mag_col], errors="coerce")).any() else g.index[0]
+        hasv = g[has_cutout_col].astype(int).values
+        cnnv = g[cnn_flag_col].astype(int).values
+        rows.append({
+            "group_id": int(gid),
+            "source_id_brightest": int(g.loc[idx_b,"source_id"]),
+            "n_objects_in_group": int(len(g)),
+            "has_cutout": int(1 if np.any(hasv==1) else (0 if np.any(hasv==0) else -1)),
+            "cnn_flag": int(1 if np.any(cnnv==1) else (0 if np.any(cnnv==0) else -1)),
+            "system": g[sys_cols].sort_values("source_id").to_dict(orient="records")
+        })
+    return pd.DataFrame(rows)
+
+def save_json_csv(df, base):
+    df.to_json(base + ".json", orient="records", lines=True)
+    d = df.copy()
+    if "system" in d.columns: d["system"] = d["system"].apply(lambda x: json.dumps(x, ensure_ascii=False))
+    d.to_csv(base + ".csv", index=False)
+
+def group_pair_type(g):
+    u = g["class_lens"].dropna().astype(str).unique()
+    return u[0] if (len(u)==1 and u[0] in {"2QP","2QI","2QU"}) else "other/ambiguous"
+
+dz_max = 0.02
+
+df_groups = build_group_level_catalog(df_objects)
+
+df_groups_pos = df_groups[df_groups["cnn_flag"] == 1].copy()
+
+df_cnn_pos = df_objects[df_objects["cnn_flag"] == 1].copy()
+dz = df_cnn_pos.groupby("group_id")["redshift_qsoc"].apply(lambda s: (pd.to_numeric(s, errors="coerce").dropna().max() - pd.to_numeric(s, errors="coerce").dropna().min()) if pd.to_numeric(s, errors="coerce").dropna().size >= 2 else np.nan).rename("dz")
+df_golden = df_groups.merge(dz.reset_index(), on="group_id", how="left")
+df_golden = df_golden[(df_golden["cnn_flag"]==1) & df_golden["dz"].notna() & (df_golden["dz"]<=dz_max)].copy()
+save_json_csv(df_golden, os.path.join(work_path, f"QUBRICS_multiples_golden_dz{dz_max:g}"))
+
+z = dz.dropna()
+if len(z):
+    bins = np.logspace(np.log10(max(z.min(), 1e-5)), np.log10(z.max()), 42)
+    plt.figure(figsize=(7,4))
+    plt.hist(z.values, bins=bins, alpha=0.6)
+    plt.xscale("log")
+    plt.xlabel("Redshift separation (Δz)")
+    plt.ylabel("Count")
+    plt.title("All CNN-positive groups (any multiplicity)")
+    plt.tight_layout()
+    plt.axvline(dz_max)
+    plt.show()
+
+g2 = df_cnn_pos.groupby("group_id").filter(lambda g: len(g) == 2)
+pair_types = g2.groupby("group_id").apply(group_pair_type).rename("pair_type")
+print("\n2Q* counts (all CNN-positive pairs):")
+print(pair_types.value_counts())
+
+gold_ids = set(df_golden["group_id"].values)
+print("\n2Q* counts (golden sample pairs):")
+print(pair_types[pair_types.index.isin(gold_ids)].value_counts())
+
+#%% (???) Visual inspection of the golden sample
+
+gold_group_ids = df_golden["group_id"].astype(int).unique().tolist()
+df_gold_objects = df_objects[df_objects["group_id"].isin(gold_group_ids)]
+df_gold_objects = df_gold_objects[df_gold_objects["source_id"].isin(good_cutout_ids)]
+id_to_index = {sid: i for i, sid in enumerate(good_cutout_ids)}
+gold_indices = [id_to_index[sid] for sid in df_gold_objects["source_id"]]
+gold_cutouts = good_cutouts[gold_indices]
+gold_group_id_per_cutout = df_gold_objects["group_id"].tolist()
+
+gold_cutouts_arr = np.asarray(gold_cutouts)
+gold_gid_arr = np.asarray(gold_group_id_per_cutout)
+i = 2
+n = len(gold_cutouts_arr)
+gid = int(gold_gid_arr[i])
+g = df_objects[df_objects["group_id"] == gid]
+g_sys = df_golden.loc[df_golden["group_id"] == gid, "system"].values
+lens_type = "unknown"
+if len(g_sys) and isinstance(g_sys[0], (list, tuple)) and len(g_sys[0]) and isinstance(g_sys[0][0], dict):
+    lens_type = str(g_sys[0][0].get("class_lens", "unknown"))
+print("\n" + "="*40)
+print(f"Index: {i+1}/{n}  |  Group ID: {gid}  |  Type: {lens_type}")
+print(f"Number of objects in group: {len(g)}")
+print("Coordinates (HHhMMmSS.SSSSs  DDdMMmSS.SSSSs):")
+coords = SkyCoord(ra=g["ra"].values * u.deg, dec=g["dec"].values * u.deg)
+for c in coords:
+    ra_str = c.ra.to_string(unit=u.hour, sep=["h","m","s"], precision=4, pad=True)
+    dec_str = c.dec.to_string(unit=u.deg, sep=["d","m","s"], precision=4, pad=True, alwayssign=True)
+    print(f"  {ra_str}  {dec_str}")
+plt.figure(figsize=(5,5))
+plt.imshow(gold_cutouts_arr[i], origin="lower")
+plt.title(f"Group {gid} | {lens_type}")
+plt.tight_layout()
+plt.show()
 
 
-
-
-
-
-
-
-
+list_grazian = [1]
 
 
 
