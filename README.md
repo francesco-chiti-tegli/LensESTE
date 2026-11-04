@@ -96,8 +96,3 @@ Codes in `other_catalogues`: L23 Lemon et al. (2023); H23 He et al. (2023); D23 
 | `spec_class`, `spec_z`, `spec_source` | | public spectroscopic class and redshift within 1.5 arcsec, from DESI DR1 (redshift warning flag zero), SDSS DR16Q, LAMOST, 2QZ and Milliquas v8 (spectroscopic types only), in this order of priority; a spectrum within 1.5 arcsec of two members is not used |
 | `followup_class`, `followup_z`, `followup_z_err`, `followup_instrument` | | class (`QSO` or `STAR`), redshift with its uncertainty and instrument of our own spectrum of the member (Table A.1 of the paper); for the unresolved field 639 the class refers to the blended spectrum of both members and is given for the brighter one |
 
-## Citation
-
-If you use this catalogue, please cite Chiti Tegli F., Guarneri F., Cristiani S., Boutsia K., Calderone G., Cupani G., Grazian A., Porru M., Trost A. 2026, A&A, submitted. The reference will be updated on publication.
-
-Contact: Francesco Chiti Tegli, frchiti (at) mpia.de
