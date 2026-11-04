@@ -2,7 +2,7 @@
 
 **An all-sky Gaia DR3 catalogue of close quasar pair candidates with imaging screening**
 
-This repository holds the catalogue of Chiti Tegli et al. (2026, A&A, submitted): 1222 fields of Gaia DR3 quasar candidates with a neighbouring quasar candidate within 5 arcsec, at Galactic latitude |b| > 25 deg, screened in Legacy Surveys DR10 and Pan-STARRS1 images where these exist and given a priority for spectroscopic follow-up. The same tables, in fixed-width format with a CDS ReadMe, will be available at the CDS (VizieR).
+This repository holds the catalogue of Chiti Tegli et al. (2026): 1222 fields of Gaia DR3 quasar candidates with a neighbouring quasar candidate within 5 arcsec, at Galactic latitude |b| > 25 deg, screened in Legacy Surveys DR10 and Pan-STARRS1 images where these exist and given a priority for spectroscopic follow-up. The same tables, in fixed-width format with a CDS ReadMe, will be available at the CDS (VizieR).
 
 ## Files
 
